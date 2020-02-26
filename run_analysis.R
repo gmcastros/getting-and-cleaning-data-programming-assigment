@@ -35,21 +35,28 @@ subject_test_data <- read.table(subject_test)
 y_test_data <- read.table(y_test)
 x_test_data <- read.table(x_test)
 
+features_data <- read.table(features)
+activity_labels_data <- read.table(activity_labels)
+
+#Assign the names here
+colnames (subject_train_data) <- "Subject"
+colnames (y_train_data) <- "Activity"
+colnames (x_train_data) <- features_data[,2]
+
+colnames (subject_test_data) <- "Subject"
+colnames (y_test_data) <- "Activity"
+colnames (x_test_data) <- features_data[,2]
+
 # This is the dataset with all data
 all_data <- rbind(cbind(subject_test_data, x_test_data, y_test_data)
                   ,cbind(subject_train_data, x_train_data, y_train_data))
 
 
 #Step 2. Extracts only the measurements on the mean and standard deviation for each measurement
-#Get the features data so we know what we are looking for. I need to collect the indexes of the mean and std
-features_data <- read.table(features)
 
 # Get the indexes where "mean" or "std" says. Use a regular expresion
 # line sample form file: fBodyGyro-mean()-Z
 mean_std_indexes <- grep("mean\\(\\)|std\\(\\)", features_data[[2]])
-
-# We need to add 2 columns to the indexes data table, otherwise we cannot merge it with the "all_data"
-mean_std_variables <- c(1,2,mean_std_indexes+2)
 
 #Get the data related to mean and std using the previously collected indexes
 filtered_data <- all_data[, mean_std_variables]
@@ -58,13 +65,13 @@ filtered_data <- all_data[, mean_std_variables]
 #sample:
 #  V1                 V2
 #1  1            WALKING
-
-activity_labels_data <- read.table(activity_labels)
-filtered_data[[2]] <- factor(filtered_data[[2]], levels = activity_labels_data[[1]], labels = activity_labels_data[[2]])
-
+colnames(activity_labels_data) <- c("Activity", "Activity Type")
+#filtered_data[[2]] <- factor(filtered_data[[2]], levels = activity_labels_data[[1]], labels = activity_labels_data[[2]])
+filtered_data_with_activity_names <- merge(filtered_data,activity_labels_data,by="Activity", all.x = TRUE)
 #Step 4: Appropriately labels the data set with descriptive variable names.
 # Names are here
-descriptive_names <- features_data[[2]][mean_std_indexes]
 
-filtered_data_with_names <- filtered_data
-names(filtered_data_with_names) <- c("subject", "activity", descriptive_names)
+
+#Step 5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+filtered_data_with_names <- aggregate(. ~Subject+~Activity,filtered_data,mean)
+write.table(filtered_data_with_names, "filtered_data_with_names_2.txt", row.name=FALSE)
