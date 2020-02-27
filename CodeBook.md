@@ -1,6 +1,6 @@
-#Getting and Cleaning Data Programming Assesment
+**Getting and Cleaning Data Programming Assesment**
 
-#Code Book
+**Code Book**
 The activities required are:
     Merges the training and the test sets to create one data set.
     Extracts only the measurements on the mean and standard deviation for each measurement.
@@ -8,7 +8,7 @@ The activities required are:
     Appropriately labels the data set with descriptive variable names.
     From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
     
-#Variables:
+**Variables:**
 The following variables contain the data from the downloaded files.
 _subject_train_data_
 _x_train_data_
@@ -24,5 +24,5 @@ _filtered_data_: This variable contains the data with only the std and mean vari
 _filtered_data_with_activity_names_: This variable add the ActivityType column to the filtered_data variable.
 _aggregated_data_: This variable has the data with the average of each variable grouped by Subject and ActivityType.
 
-#File:
+**File:**
 _aggregated_data.txt_: This one contains the result of the aggregation which is Step 5.
