@@ -3,12 +3,12 @@
 
 #Download the data
 # This will create a file called data.zip
-#download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "data.zip")
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "data.zip")
 
 #This will unzip the data into the UCI HAR Dataset folder
-#unzip("data.zip")
+unzip("data.zip")
 
-#Run 
+#Run this if you don't have dplyr
 # install.packages("dplyr") 
 # install.packages("Rcpp")
 # if you don't have the library
@@ -39,6 +39,7 @@ features_data <- read.table(features)
 activity_labels_data <- read.table(activity_labels)
 
 #Assign the names here
+# Tip: Better to do this at the beginning than later 
 colnames (subject_train_data) <- "Subject"
 colnames (y_train_data) <- "Activity"
 colnames (x_train_data) <- features_data[,2]
@@ -53,25 +54,30 @@ train_data <- cbind(subject_train_data, x_train_data, y_train_data)
 # This is the dataset with all data
 all_data <- rbind(test_data , train_data)
 
+#labels
+colnames(activity_labels_data) <- c("Activity", "ActivityType")
+
 #Step 2. Extracts only the measurements on the mean and standard deviation for each measurement
 
 # Get the indexes where "mean" or "std" says. Use a regular expresion
 # line sample form file: fBodyGyro-mean()-Z
 columnas <- colnames(all_data)
 #Get the data related to mean and std using a pattern
-filtered_data <- all_data[, grep('Subject|Activity|*mean*|*std*', columnas)]
+# Because I added the Subject and Activity columns before. I need to include them in the filter
+filtered_data <- all_data[, grep("Subject|Activity|*mean*|*std*", columnas)]
 
 #Step 3. Uses descriptive activity names to name the activities in the data set
 #sample:
 #  V1                 V2
 #1  1            WALKING
-colnames(activity_labels_data) <- c("Activity", "Activity Type")
-#filtered_data[[2]] <- factor(filtered_data[[2]], levels = activity_labels_data[[1]], labels = activity_labels_data[[2]])
+#let's make a "join"
 filtered_data_with_activity_names <- merge(filtered_data,activity_labels_data,by="Activity", all.x = TRUE)
-#Step 4: Appropriately labels the data set with descriptive variable names.
-# Names are here
 
+#Step 4: Appropriately labels the data set with descriptive variable names.
+#Did this on Step 1. The all_data dataset already has the labels. It was easier to do it at the beginning than later.
 
 #Step 5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
-filtered_data_with_names <- aggregate(. ~Subject+~Activity,filtered_data,mean)
-write.table(filtered_data_with_names, "filtered_data_with_names_2.txt", row.name=FALSE)
+# We need to aggregate the data with mean
+
+aggregated_data <- aggregate(.~Subject+ActivityType,filtered_data_with_activity_names,mean)
+write.table(aggregated_data, "aggregated_data.txt", row.name=FALSE)
