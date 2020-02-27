@@ -3,10 +3,10 @@
 
 #Download the data
 # This will create a file called data.zip
-download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "data.zip")
+#download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "data.zip")
 
 #This will unzip the data into the UCI HAR Dataset folder
-unzip("data.zip")
+#unzip("data.zip")
 
 #Run 
 # install.packages("dplyr") 
@@ -47,19 +47,19 @@ colnames (subject_test_data) <- "Subject"
 colnames (y_test_data) <- "Activity"
 colnames (x_test_data) <- features_data[,2]
 
-# This is the dataset with all data
-all_data <- rbind(cbind(subject_test_data, x_test_data, y_test_data)
-                  ,cbind(subject_train_data, x_train_data, y_train_data))
+test_data <- cbind(subject_test_data, x_test_data, y_test_data)
+train_data <- cbind(subject_train_data, x_train_data, y_train_data)
 
+# This is the dataset with all data
+all_data <- rbind(test_data , train_data)
 
 #Step 2. Extracts only the measurements on the mean and standard deviation for each measurement
 
 # Get the indexes where "mean" or "std" says. Use a regular expresion
 # line sample form file: fBodyGyro-mean()-Z
-mean_std_indexes <- grep("mean\\(\\)|std\\(\\)", features_data[[2]])
-
-#Get the data related to mean and std using the previously collected indexes
-filtered_data <- all_data[, mean_std_variables]
+columnas <- colnames(all_data)
+#Get the data related to mean and std using a pattern
+filtered_data <- all_data[, grep('Subject|Activity|*mean*|*std*', columnas)]
 
 #Step 3. Uses descriptive activity names to name the activities in the data set
 #sample:
