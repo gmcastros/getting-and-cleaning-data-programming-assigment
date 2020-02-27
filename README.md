@@ -17,3 +17,18 @@ You should create one R script called run_analysis.R that does the following.
     Uses descriptive activity names to name the activities in the data set
     Appropriately labels the data set with descriptive variable names.
     From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+Solution
+The file: run_analysis.R contains the logic to create the dataset.
+
+Pre-requisite:
+The data is already in the working directory. I used the download functions to get it and unzip it into the working directory.
+
+Step 1: Involves collecting the data from the different
+I also added the column names to make it easier when handling it after. Specially to do the merge and aggregated version in the final step.
+
+Step 2: This is where you collect the data you only need, so you filter to collect the mean and std data
+
+Step 3: This is where you add the Activity name, instead of having just the actvity ID.
+
+Step 4: This is where you create the aggregation and result file.
